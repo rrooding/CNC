@@ -1,0 +1,64 @@
+/ {
+    compatible = "espressif,esp32";
+
+    gpio_pendant {
+        compatible = "gpio-keys";
+        status = "okay";
+        encoder_a {
+            gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+            label = "ENCODER_A";
+        };
+        encoder_b {
+            gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+            label = "ENCODER_B";
+        };
+        encoder_a_inv {
+            gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+            label = "ENCODER_A_INV";
+        };
+        encoder_b_inv {
+            gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+            label = "ENCODER_B_INV";
+        };
+        axis_x {
+            gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+            label = "AXIS_X";
+        };
+        axis_y {
+            gpios = <&gpio0 18 GPIO_ACTIVE_HIGH>;
+            label = "AXIS_Y";
+        };
+        axis_z {
+            gpios = <&gpio0 19 GPIO_ACTIVE_HIGH>;
+            label = "AXIS_Z";
+        };
+        scale_x1 {
+            gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>;
+            label = "SCALE_X1";
+        };
+        scale_x10 {
+            gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
+            label = "SCALE_X10";
+        };
+        scale_x100 {
+            gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
+            label = "SCALE_X100";
+        };
+    };
+};
+
+&pinctrl {
+    uart1_default: uart1_default {
+        group1 {
+            pinmux = <UART1_TX_GPIO25>,
+                     <UART1_RX_GPIO26>;
+        };
+    };
+};
+
+&uart1 {
+    status = "okay";
+    current-speed = <115200>;
+    pinctrl-0 = <&uart1_default>;
+    pinctrl-names = "default";
+};
