@@ -1,6 +1,6 @@
 #include <vector>
 #include <string>
-#include <string.h>
+#include <cmath>
 #include "GrblParserC.h"
 
 #include <zephyr/kernel.h>
@@ -8,7 +8,6 @@
 #include <zephyr/drivers/pinctrl.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/uart.h>
-#include <math.h>
 
 // GPIO pin definitions
 #define ENCODER_A_NODE DT_PATH(gpio_pendant, encoder_a)
@@ -23,8 +22,6 @@
 #define SCALE_X1_NODE DT_PATH(gpio_pendant, scale_x1)
 #define SCALE_X10_NODE DT_PATH(gpio_pendant, scale_x10)
 #define SCALE_X100_NODE DT_PATH(gpio_pendant, scale_x100)
-
-// #define ESTOP_PIN        25   // ESP32 GPIO25 for E-stop (Blue-Black)
 
 #define UART_DEVICE DT_NODELABEL(uart1)
 
@@ -101,32 +98,26 @@ private:
 
     /* Generate G-Code and send to console */
     void generate_gcode(int steps) {
-        char gcode[64];
-        float step_size = 0.001;  // Base step size in mm (adjust based on your encoder resolution)
+        float step_size = 0.001f;  // Base step size in mm (adjust based on your encoder resolution)
         float movement = steps * step_size * scale_factor;  // Total movement in mm (positive or negative)
 
         // Ensure movement is rounded to a reasonable precision (e.g., 3 decimal places for mm)
-        movement = roundf(movement * 1000.0) / 1000.0;  // Round to 0.001 mm precision
+        movement = std::round(movement * 1000.0f) / 1000.0f;  // Round to 0.001 mm precision
 
         // Clamp movement to avoid tiny or zero movements (e.g., due to noise or rounding)
-        if (fabs(movement) < 0.001) {
+        if (std::abs(movement) < 0.001f) {
             return;  // Ignore movements smaller than 0.001 mm
         }
 
-        // Generate G-Code in the format $J=G91 G21 [Axis][Distance] F1000
-        // Use %.3f for float formatting to ensure 3 decimal places (e.g., 0.001, 0.010, 0.100)
-        int len = snprintf(gcode, sizeof(gcode), "$J=G91 G21 %c%.3f F1000\r\n", selected_axis, movement);
+        char buffer[64];
+        snprintf(buffer, sizeof(buffer), "$J=G91 G21 %c%.3f F1000\r\n", selected_axis, static_cast<double>(movement));
+        std::string gcode {buffer};
 
-        if (len < 0 || len >= sizeof(gcode)) {
-            printk("G-Code formatting error\n");
-            return;
-        }
-
-        printk("Generated G-Code: %s", gcode);  // Debug output to verify
+        printk("Generated G-Code: %s", gcode.c_str());  // Debug output to verify
         printk("Debug - steps: %d, scale_factor: %d, movement: %.3f\n",
-            steps, scale_factor, movement);  // Additional debugging
+            steps, scale_factor, static_cast<double>(movement));  // Additional debugging
 
-        fnc_send_line(gcode, 10);
+        fnc_send_line(gcode.c_str(), 10);
         // uart_poll_out(uart_dev, gcode, strlen(gcode));
     }
 
