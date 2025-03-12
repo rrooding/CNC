@@ -1,49 +1,50 @@
 / {
     compatible = "espressif,esp32";
 
-    gpio_pendant {
+    pendant_switches {
         compatible = "gpio-keys";
         status = "okay";
-        encoder_a {
-            gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
-            label = "ENCODER_A";
-        };
-        encoder_b {
-            gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
-            label = "ENCODER_B";
-        };
-        encoder_a_inv {
-            gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
-            label = "ENCODER_A_INV";
-        };
-        encoder_b_inv {
-            gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
-            label = "ENCODER_B_INV";
-        };
+
+        /* Axis rotary switch (3-position) */
         axis_x {
             gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
             label = "AXIS_X";
+            zephyr,code = <1>;
         };
         axis_y {
             gpios = <&gpio0 18 GPIO_ACTIVE_HIGH>;
             label = "AXIS_Y";
+            zephyr,code = <2>;
         };
         axis_z {
             gpios = <&gpio0 19 GPIO_ACTIVE_HIGH>;
             label = "AXIS_Z";
+            zephyr,code = <3>;
         };
+
+        /* Scale rotary switch (3-position) */
         scale_x1 {
             gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>;
             label = "SCALE_X1";
+            zephyr,code = <4>;
         };
         scale_x10 {
             gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
             label = "SCALE_X10";
+            zephyr,code = <5>;
         };
         scale_x100 {
             gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
             label = "SCALE_X100";
+            zephyr,code = <6>;
         };
+    };
+
+    pendant_encoder: rotary-encoder {
+        compatible = "rotary-encoder";
+        status = "okay";
+        a-gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+        b-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
     };
 };
 

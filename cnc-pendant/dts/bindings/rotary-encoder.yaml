@@ -1,0 +1,16 @@
+description: |
+  A rotary encoder with two GPIO pins for quadrature encoding (Phase A and Phase B).
+
+compatible: "rotary-encoder"
+
+properties:
+  a-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO pin connected to the encoder's Phase A signal.
+  b-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO pin connected to the encoder's Phase B signal.
